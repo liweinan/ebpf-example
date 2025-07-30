@@ -1,4 +1,4 @@
-#include <linux/bpf.h>
+#include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 
 // 定义许可证（必需）
@@ -11,4 +11,3 @@ int hello(void *ctx) {
     bpf_trace_printk(msg, sizeof(msg)); // 输出到 trace_pipe
     return 0;
 }
-

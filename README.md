@@ -18,20 +18,39 @@ This project is designed for Debian-based Linux distributions (like Ubuntu).
 
 ## Building the eBPF Program
 
-1.  **Compile the Code:**
-    Use the `build.sh` script to compile the eBPF program. This script will first generate the required `vmlinux.h` header and then build the C code.
+Use the `build.sh` script to compile the eBPF program.
+
+```bash
+chmod +x build.sh
+./build.sh
+```
+
+This will produce the `hello_kern.o` object file.
+
+## Loading and Running with bpftool
+
+You can use `bpftool` to load, run, and manage the eBPF program.
+
+1.  **Load the Program:**
+    Use the following command to load the object file and attach the program to the `sys_enter_execve` tracepoint.
 
     ```bash
-    chmod +x build.sh
-    ./build.sh
+    sudo bpftool prog load hello_kern.o /sys/fs/bpf/hello
+    sudo bpftool prog attach /sys/fs/bpf/hello tracepoint/syscalls/sys_enter_execve
     ```
 
-    If successful, this will produce an object file named `hello_kern.o`.
+2.  **View the Output:**
+    Open another terminal and read the kernel's trace pipe to see the output.
 
-## Loading and Running
+    ```bash
+    sudo cat /sys/kernel/debug/tracing/trace_pipe
+    ```
+    You should see the "Hello, eBPF World!" message each time a new command is executed.
 
-After building, you can load the `hello_kern.o` file into the kernel using an eBPF loader program (not included in this example). Once loaded, the program will print "Hello, eBPF World!" to the kernel trace pipe every time a new program is executed on the system.
+3.  **Unload the Program:**
+    When you are finished, you can detach and unload the program using `bpftool`.
 
-You can view the output by reading the trace pipe:
-```bash
-sudo cat /sys/kernel/debug/tracing/trace_pipe
+    ```bash
+    sudo bpftool prog detach /sys/fs/bpf/hello tracepoint/syscalls/sys_enter_execve
+    sudo rm /sys/fs/bpf/hello
+    ```

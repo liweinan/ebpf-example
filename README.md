@@ -1,56 +1,55 @@
-# eBPF Example
+# Hello World eBPF Example (eunomia-bpf)
 
-This project provides a simple eBPF "Hello World" example that demonstrates the modern CO-RE (Compile Once - Run Everywhere) development approach.
+This project is a simple "Hello World" eBPF example based on the [eunomia-bpf developer tutorial](https://github.com/eunomia-bpf/bpf-developer-tutorial/blob/main/src/1-helloworld/README.md).
 
-## Prerequisites
+It uses the `eunomia-bpf` toolchain to simplify the process of compiling, loading, and running eBPF programs.
 
-This project is designed for Debian-based Linux distributions (like Ubuntu).
+## Quick Start with `ecc` and `ecli`
 
-## Setup
+The easiest way to run this example is by using the pre-compiled `ecc` compiler and `ecli` runner.
+
+1.  **Download the tools:**
+    ```bash
+    # Download the compiler
+    wget https://github.com/eunomia-bpf/eunomia-bpf/releases/latest/download/ecc
+    chmod +x ./ecc
+
+    # Download the runner
+    wget https://github.com/eunomia-bpf/eunomia-bpf/releases/latest/download/ecli
+    chmod +x ./ecli
+    ```
+
+2.  **Build the eBPF program:**
+    The `ecc` tool compiles the C source code into a `package.json` file, which bundles the eBPF bytecode and metadata.
+    ```bash
+    ./ecc hello_kern.c
+    ```
+
+3.  **Run the eBPF program:**
+    The `ecli` tool runs the program defined in the generated `package.json`.
+    ```bash
+    sudo ./ecli run package.json
+    ```
+
+4.  **View the Output:**
+    In another terminal, you can view the output from the eBPF program by reading the kernel's trace pipe:
+    ```bash
+    sudo cat /sys/kernel/debug/tracing/trace_pipe
+    ```
+    You will see "Hello, eBPF World!" messages every time a new program is executed on the system.
+
+5.  **Stop the Program:**
+    Press `Ctrl-C` in the terminal where `ecli` is running to stop the program.
+
+## Manual Development Setup
+
+If you want to build the project from source or develop eBPF programs locally without using the pre-compiled tools, you will need to install the necessary development toolchain.
 
 1.  **Install Dependencies:**
-    Run the `pre-install.sh` script to install all the necessary packages for eBPF development.
-
+    The `pre-install.sh` script will install `clang`, `llvm`, `libbpf-dev`, and other required tools on a Debian-based system.
     ```bash
     chmod +x pre-install.sh
     sudo ./pre-install.sh
     ```
-
-## Building the eBPF Program
-
-Use the `build.sh` script to compile the eBPF program.
-
-```bash
-chmod +x build.sh
-./build.sh
-```
-
-This will produce the `hello_kern.o` object file.
-
-## Loading and Running with bpftool
-
-You can use `bpftool` to load, run, and manage the eBPF program.
-
-1.  **Load the Program:**
-    Use the following command to load the object file and attach the program to the `sys_enter_execve` tracepoint.
-
-    ```bash
-    sudo bpftool prog load hello_kern.o /sys/fs/bpf/hello
-    sudo bpftool prog attach pinned /sys/fs/bpf/hello tracepoint syscalls/sys_enter_execve
-    ```
-
-2.  **View the Output:**
-    Open another terminal and read the kernel's trace pipe to see the output.
-
-    ```bash
-    sudo cat /sys/kernel/debug/tracing/trace_pipe
-    ```
-    You should see the "Hello, eBPF World!" message each time a new command is executed.
-
-3.  **Unload the Program:**
-    When you are finished, you can detach and unload the program using `bpftool`.
-
-    ```bash
-    sudo bpftool prog detach pinned /sys/fs/bpf/hello tracepoint syscalls/sys_enter_execve
-    sudo rm /sys/fs/bpf/hello
-    ```
+2.  **Build and Run:**
+    After installing the dependencies, you can use tools like `clang` and `bpftool` to manually build and run the eBPF code, or build the `ecc` and `ecli` tools from source.

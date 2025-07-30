@@ -1,0 +1,15 @@
+{
+  "name": "ebpf-hello-world",
+  "version": "1.0.0",
+  "description": "Simple eBPF Hello World example",
+  "main": "hello_kern.c",
+  "scripts": {
+    "build": "./build.sh",
+    "run": "ecli run package.json"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": ["ebpf", "bpf", "linux", "kernel"],
+  "author": "",
+  "license": "GPL-2.0"
+} 

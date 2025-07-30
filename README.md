@@ -36,7 +36,7 @@ You can use `bpftool` to load, run, and manage the eBPF program.
 
     ```bash
     sudo bpftool prog load hello_kern.o /sys/fs/bpf/hello
-    sudo bpftool prog attach /sys/fs/bpf/hello tracepoint/syscalls/sys_enter_execve
+    sudo bpftool prog attach pinned /sys/fs/bpf/hello tracepoint syscalls/sys_enter_execve
     ```
 
 2.  **View the Output:**
@@ -51,6 +51,6 @@ You can use `bpftool` to load, run, and manage the eBPF program.
     When you are finished, you can detach and unload the program using `bpftool`.
 
     ```bash
-    sudo bpftool prog detach /sys/fs/bpf/hello tracepoint/syscalls/sys_enter_execve
+    sudo bpftool prog detach pinned /sys/fs/bpf/hello tracepoint syscalls/sys_enter_execve
     sudo rm /sys/fs/bpf/hello
     ```
